@@ -1,6 +1,24 @@
-# DanDoeTech PackageSkeleton
+# Laravel OpenAPI Generator (bridge)
 
-> A modern PHP package skeleton with CI, QA and quality reporting — ready for Packagist.
+Artisan command to export OpenAPI 3.1 from the `dandoetech/openapi-generator`.
+Resolves your Resource Registry and ModelMeta provider via Laravel’s container.
+
+## Install
+composer require dandoetech/laravel-openapi-generator
+
+## Configure
+php artisan vendor:publish --tag=openapi-config
+
+`config/openapi.php`:
+- `title`, `version`, `output` (relative to storage/)
+- optionally `resources_config` if you don’t bind a Registry in the container
+
+## Usage
+php artisan openapi:export
+php artisan openapi:export --title="Catalog API" --version="0.2.0"
+php artisan openapi:export --output="public/openapi.json"
+php artisan openapi:export --resources="bootstrap/resources.php"
+
 
 ![Build](https://github.com/dandoetech/package-skeleton/actions/workflows/tests.yml/badge.svg)
 ![Static Analysis](https://github.com/dandoetech/package-skeleton/actions/workflows/static-analysis.yml/badge.svg)
