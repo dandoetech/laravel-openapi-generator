@@ -13,8 +13,31 @@
         "dandoetech/resource-registry": "dev-main",
         "dandoetech/laravel-resource-registry": "dev-master"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0",
+        "phpstan/phpstan": "^2.0",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "orchestra/testbench": "^9.0 || ^10.0"
+    },
     "autoload": {
         "psr-4": { "DanDoeTech\\LaravelOpenApiGenerator\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DanDoeTech\\LaravelOpenApiGenerator\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-text --coverage-clover=coverage/clover.xml",
+        "cs:fix": "php-cs-fixer fix --allow-risky=yes",
+        "cs:check": "php-cs-fixer fix --allow-risky=yes --dry-run",
+        "stan": "phpstan analyse --memory-limit=1G",
+        "qa": [
+            "@cs:check",
+            "@stan",
+            "@test"
+        ]
     },
     "extra": {
         "laravel": {

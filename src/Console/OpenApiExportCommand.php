@@ -24,9 +24,14 @@ final class OpenApiExportCommand extends Command
     {
         $cfg = (array) config('openapi');
 
-        $title   = (string) ($this->option('title') ?: ($cfg['title'] ?? 'API'));
-        $version = (string) ($this->option('oaversion') ?: ($cfg['version'] ?? '1.0.0'));
-        $outRel  = (string) ($this->option('output') ?: ($cfg['output'] ?? 'app/openapi.json'));
+        $optTitle = $this->option('title');
+        $title = \is_string($optTitle) && $optTitle !== '' ? $optTitle : (\is_string($cfg['title'] ?? null) ? $cfg['title'] : 'API');
+
+        $optVersion = $this->option('oaversion');
+        $version = \is_string($optVersion) && $optVersion !== '' ? $optVersion : (\is_string($cfg['version'] ?? null) ? $cfg['version'] : '1.0.0');
+
+        $optOutput = $this->option('output');
+        $outRel = \is_string($optOutput) && $optOutput !== '' ? $optOutput : (\is_string($cfg['output'] ?? null) ? $cfg['output'] : 'app/openapi.json');
         $outPath = storage_path($outRel);
 
         /** @var ModelMetaProviderInterface|null $meta */
@@ -34,14 +39,14 @@ final class OpenApiExportCommand extends Command
             ? $this->laravel->make(ModelMetaProviderInterface::class)
             : null;
 
-        $resolver  = new ResourceResolver($meta);
+        $resolver = new ResourceResolver($meta);
         $generator = new OpenApiGenerator($resolver, title: $title, version: $version);
 
         $doc = $generator->generate($registry);
         $json = $doc->toJson();
 
         $disk = $storage->disk('local');
-        $disk->put(ltrim($outRel, '/'), $json);
+        $disk->put(\ltrim($outRel, '/'), $json);
 
         $this->info("OpenAPI exported to: {$outPath}");
 

@@ -20,8 +20,8 @@ final class OpenApiServiceProvider extends ServiceProvider
             __DIR__ . '/../../config/openapi.php' => $this->app->configPath('openapi.php'),
         ], 'openapi-config');
 
-//        if ($this->app->runningInConsole()) {
-            $this->commands([OpenApiExportCommand::class]);
-//        }
+        //        if ($this->app->runningInConsole()) {
+        $this->commands([OpenApiExportCommand::class]);
+        //        }
     }
 }

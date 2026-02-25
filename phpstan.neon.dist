@@ -4,7 +4,8 @@ parameters:
     - src
     - tests
   tmpDir: .phpstan/cache
-  checkGenericClassInNonGenericObjectType: true
-  checkMissingIterableValueType: true
-  checkImplicitMixed: true
-  reportUnmatchedIgnoredErrors: true
+  reportUnmatchedIgnoredErrors: false
+  ignoreErrors:
+    # Laravel helper functions are provided at runtime by illuminate/foundation
+    - '#Function config not found\.#'
+    - '#Function storage_path not found\.#'

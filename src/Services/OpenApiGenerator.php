@@ -16,19 +16,24 @@ final readonly class OpenApiGenerator
     ) {
     }
 
+    /** @return array<string, mixed> */
     public function create(): array
     {
         $cfg = (array) config('openapi');
 
-        $title   = (string) ($cfg['title'] ?? 'API');
-        $version = (string) ($cfg['version'] ?? '1.0.0');
-        $prefix  = (string) ($cfg['route_prefix'] ?? config('generic_api.prefix', 'api'));
-        $base    = (string) ($cfg['server_base'] ?? config('app.url', ''));
+        $title = \is_string($cfg['title'] ?? null) ? $cfg['title'] : 'API';
+        $version = \is_string($cfg['version'] ?? null) ? $cfg['version'] : '1.0.0';
+
+        $cfgPrefix = $cfg['route_prefix'] ?? config('generic_api.prefix', 'api');
+        $prefix = \is_string($cfgPrefix) ? $cfgPrefix : 'api';
+
+        $cfgBase = $cfg['server_base'] ?? config('app.url', '');
+        $base = \is_string($cfgBase) ? $cfgBase : '';
 
         // Build server URL: APP_URL + /prefix  (handles missing slash)
-        $serverUrl = rtrim($base, '/') . '/' . trim($prefix, '/');
+        $serverUrl = \rtrim($base, '/') . '/' . \trim($prefix, '/');
 
-        $resolver  = new ResourceResolver($this->modelMetaProvider);
+        $resolver = new ResourceResolver($this->modelMetaProvider);
         $generator = new \DanDoeTech\OpenApiGenerator\OpenApi\OpenApiGenerator(
             $resolver,
             title: $title,
