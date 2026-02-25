@@ -19,12 +19,12 @@ final readonly class OpenApiGenerator
     /** @return array<string, mixed> */
     public function create(): array
     {
-        $cfg = (array) config('openapi');
+        $cfg = (array) config('ddt_openapi');
 
         $title = \is_string($cfg['title'] ?? null) ? $cfg['title'] : 'API';
         $version = \is_string($cfg['version'] ?? null) ? $cfg['version'] : '1.0.0';
 
-        $cfgPrefix = $cfg['route_prefix'] ?? config('generic_api.prefix', 'api');
+        $cfgPrefix = $cfg['route_prefix'] ?? config('ddt_api.prefix', 'api');
         $prefix = \is_string($cfgPrefix) ? $cfgPrefix : 'api';
 
         $cfgBase = $cfg['server_base'] ?? config('app.url', '');

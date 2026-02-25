@@ -25,6 +25,6 @@ final class OpenApiServiceProviderTest extends TestCase
 
     public function testConfigIsMerged(): void
     {
-        $this->assertNotNull(config('openapi'));
+        $this->assertNotNull(config('ddt_openapi'));
     }
 }

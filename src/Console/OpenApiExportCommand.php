@@ -14,15 +14,15 @@ use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 final class OpenApiExportCommand extends Command
 {
     protected $signature = 'openapi:export
-        {--output= : Relative to storage_path(); defaults to config(openapi.output)}
-        {--title= : Overrides config(openapi.title)}
-        {--oaversion= : Overrides config(openapi.version)}';
+        {--output= : Relative to storage_path(); defaults to config(ddt_openapi.output)}
+        {--title= : Overrides config(ddt_openapi.title)}
+        {--oaversion= : Overrides config(ddt_openapi.version)}';
 
     protected $description = 'Export OpenAPI 3.1 document generated from Resource Registry (with model meta fallback).';
 
     public function handle(Registry $registry, FilesystemFactory $storage): int
     {
-        $cfg = (array) config('openapi');
+        $cfg = (array) config('ddt_openapi');
 
         $optTitle = $this->option('title');
         $title = \is_string($optTitle) && $optTitle !== '' ? $optTitle : (\is_string($cfg['title'] ?? null) ? $cfg['title'] : 'API');
