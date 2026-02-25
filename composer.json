@@ -8,6 +8,7 @@
         "php": "^8.2 || ^8.3 || ^8.4",
         "illuminate/support": "^10.0 || ^11.0 || ^12.0",
         "illuminate/console": "^10.0 || ^11.0 || ^12.0",
+        "illuminate/contracts": "^10.0 || ^11.0 || ^12.0",
         "illuminate/filesystem": "^10.0 || ^11.0 || ^12.0",
         "dandoetech/openapi-generator": "dev-main",
         "dandoetech/resource-registry": "dev-main",
