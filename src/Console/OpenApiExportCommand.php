@@ -7,7 +7,6 @@ namespace DanDoeTech\LaravelOpenApiGenerator\Console;
 use DanDoeTech\OpenApiGenerator\Contracts\ModelMetaProviderInterface;
 use DanDoeTech\OpenApiGenerator\OpenApi\OpenApiGenerator;
 use DanDoeTech\OpenApiGenerator\Support\ResourceResolver;
-use DanDoeTech\LaravelOpenApiGenerator\Support\LaravelRegistryFactory;
 use DanDoeTech\ResourceRegistry\Registry\Registry;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
@@ -17,12 +16,11 @@ final class OpenApiExportCommand extends Command
     protected $signature = 'openapi:export
         {--output= : Relative to storage_path(); defaults to config(openapi.output)}
         {--title= : Overrides config(openapi.title)}
-        {--oaversion= : Overrides config(openapi.version)}
-        {--resources= : Path to a resources.php file if not using a bound Registry}';
+        {--oaversion= : Overrides config(openapi.version)}';
 
     protected $description = 'Export OpenAPI 3.1 document generated from Resource Registry (with model meta fallback).';
 
-    public function handle(FilesystemFactory $storage)
+    public function handle(Registry $registry, FilesystemFactory $storage): int
     {
         $cfg = (array) config('openapi');
 
@@ -31,13 +29,6 @@ final class OpenApiExportCommand extends Command
         $outRel  = (string) ($this->option('output') ?: ($cfg['output'] ?? 'app/openapi.json'));
         $outPath = storage_path($outRel);
 
-        $resourcesPath = $this->option('resources') ?: ($cfg['resources_config'] ?? base_path('config/resources.php'));
-
-        // Resolve Registry (bound or from array config)
-        /** @var Registry $registry */
-        $registry = LaravelRegistryFactory::make($this->laravel, is_string($resourcesPath) ? $resourcesPath : null);
-
-        // Resolve model meta provider (composite provided by laravel-model-meta)
         /** @var ModelMetaProviderInterface|null $meta */
         $meta = $this->laravel->bound(ModelMetaProviderInterface::class)
             ? $this->laravel->make(ModelMetaProviderInterface::class)
@@ -49,7 +40,7 @@ final class OpenApiExportCommand extends Command
         $doc = $generator->generate($registry);
         $json = $doc->toJson();
 
-        $disk = $storage->disk('local'); // storage/app
+        $disk = $storage->disk('local');
         $disk->put(ltrim($outRel, '/'), $json);
 
         $this->info("OpenAPI exported to: {$outPath}");

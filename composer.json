@@ -9,7 +9,8 @@
         "illuminate/support": "^10.0 || ^11.0 || ^12.0",
         "illuminate/filesystem": "^10.0 || ^11.0 || ^12.0",
         "dandoetech/openapi-generator": "dev-main",
-        "dandoetech/resource-registry": "dev-main"
+        "dandoetech/resource-registry": "dev-main",
+        "dandoetech/laravel-resource-registry": "dev-master"
     },
     "autoload": {
         "psr-4": { "DanDoeTech\\LaravelOpenApiGenerator\\": "src/" }
