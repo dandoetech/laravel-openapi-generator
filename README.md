@@ -1,77 +1,127 @@
-# Laravel OpenAPI Generator (bridge)
+# Laravel OpenAPI Generator
 
-Artisan command to export OpenAPI 3.1 from the `dandoetech/openapi-generator`.
-Resolves your Resource Registry and ModelMeta provider via Laravel’s container.
+Laravel bridge for the DanDoeTech OpenAPI generator. Provides an Artisan command to export OpenAPI 3.1 specs from the Resource Registry.
 
-## Install
-composer require dandoetech/laravel-openapi-generator
-
-## Configure
-php artisan vendor:publish --tag=openapi-config
-
-`config/openapi.php`:
-- `title`, `version`, `output` (relative to storage/)
-- optionally `resources_config` if you don’t bind a Registry in the container
-
-## Usage
-php artisan openapi:export
-php artisan openapi:export --title="Catalog API" --version="0.2.0"
-php artisan openapi:export --output="public/openapi.json"
-php artisan openapi:export --resources="bootstrap/resources.php"
-
-
-![Build](https://github.com/dandoetech/package-skeleton/actions/workflows/tests.yml/badge.svg)
-![Static Analysis](https://github.com/dandoetech/package-skeleton/actions/workflows/static-analysis.yml/badge.svg)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/b7ccf297da214db5a81604b88ae0e704)](https://app.codacy.com?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/b7ccf297da214db5a81604b88ae0e704)](https://app.codacy.com?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dandoetech_package-skeleton&metric=alert_status&token=0f6e812685c39ef11dcfff8b33a14c0c529a6fe1)](https://sonarcloud.io/summary/new_code?id=dandoetech_package-skeleton)
-
-## Install
+## Installation
 
 ```bash
-composer require dandoetech/package-skeleton
+composer require dandoetech/laravel-openapi-generator
 ```
 
-## Usage
+The service provider is auto-discovered. Publish the config:
+
+```bash
+php artisan vendor:publish --tag=ddt-openapi-config
+```
+
+Requires [`dandoetech/laravel-resource-registry`](https://github.com/dandoetech/laravel-resource-registry).
+
+## Quick Start
+
+Export the spec:
+
+```bash
+php artisan openapi:export
+```
+
+This generates an OpenAPI 3.1 JSON file at `storage/app/openapi.json` (configurable).
+
+Override title or version:
+
+```bash
+php artisan openapi:export --title="Catalog API" --oaversion="2.0.0"
+php artisan openapi:export --output="public/openapi.json"
+```
+
+### What Gets Generated
+
+Every registered resource produces:
+- `GET /{resource}` — list endpoint
+- `POST /{resource}` — create endpoint
+- `GET /{resource}/{id}` — show endpoint
+- A component schema with all fields and computed fields
+
+Example output (abbreviated):
+
+```json
+{
+  "openapi": "3.1.0",
+  "info": { "title": "API", "version": "1.0.0" },
+  "servers": [{ "url": "http://localhost/api", "description": "Primary API" }],
+  "paths": {
+    "/product": {
+      "get": { "summary": "List Product" },
+      "post": { "summary": "Create Product" }
+    },
+    "/product/{id}": {
+      "get": { "summary": "Fetch Product" }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "price": { "type": "number", "format": "double" },
+          "category_name": { "type": "string" }
+        },
+        "required": ["name", "price"]
+      },
+      "ProblemJson": { "..." : "..." }
+    }
+  }
+}
+```
+
+Computed fields (like `category_name`) appear in schemas as regular properties. Error responses use the RFC 7807 `ProblemJson` schema.
+
+## Configuration
+
+`config/ddt_openapi.php`:
 
 ```php
-<?php
+return [
+    // OpenAPI info block
+    'title'   => env('OPENAPI_TITLE', 'API'),
+    'version' => env('OPENAPI_VERSION', '1.0.0'),
 
-declare(strict_types=1);
-
-use DanDoeTech\PackageSkeleton\Example;
-
-$ex = new Example();
-echo $ex->greet('World'); // Hello, World!
+    // Output path relative to storage_path()
+    'output'  => env('OPENAPI_OUTPUT', 'app/openapi.json'),
+];
 ```
 
-## Development
+The server URL is built from `config('app.url')` and `config('ddt_api.prefix')`.
+
+## Programmatic Use
+
+Generate the spec in code:
+
+```php
+use DanDoeTech\LaravelOpenApiGenerator\Services\OpenApiGenerator;
+
+$generator = app(OpenApiGenerator::class);
+$spec = $generator->create(); // array
+
+return response()->json($spec);
+```
+
+## API Overview
+
+| Class | Purpose |
+|---|---|
+| `OpenApiServiceProvider` | Registers config, artisan command |
+| `OpenApiExportCommand` | `openapi:export` with `--output`, `--title`, `--oaversion` options |
+| `OpenApiGenerator` (service) | Builds spec from Registry + config, returns array |
+
+## Testing
 
 ```bash
 composer install
-composer qa         # runs cs:check, phpstan, tests
-composer cs:fix     # auto-fix coding style
-composer test       # run test suite
-composer test:coverage
+composer test        # PHPUnit (Orchestra Testbench)
+composer qa          # cs:check + phpstan + test
 ```
 
-## Quality Gates
+## License
 
-- PSR-12 via PHP-CS-Fixer (with strict types, imports, trailing commas)
-- PHPStan level `max`
-- PHPUnit 11 with coverage (Clover + HTML)
-- GitHub Actions: tests (PHP 8.2 / 8.3 / 8.4 / 8.5), static analysis, cache
-- **Codacy** coverage upload (needs `CODACY_PROJECT_TOKEN` secret)
-- **SonarCloud** analysis (needs `SONAR_TOKEN` secret)
-
-## Releasing
-
-- Create a tag like `v0.1.0`
-- Push to GitHub — Packagist auto-updates if hooked, or submit manually
-
-## Rename This Skeleton
-
-- Replace vendor & package in `composer.json` (`dandoetech/package-skeleton`)
-- Replace namespace `DanDoeTech\PackageSkeleton\` in `/src` and `/tests`
-- Search/replace badges in `README.md`
-- Optional: adjust `LICENSE` owner
+MIT
