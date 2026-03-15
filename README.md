@@ -91,7 +91,7 @@ return [
 ];
 ```
 
-The server URL is built from `config('app.url')` and `config('ddt_api.prefix')`.
+The server URL is built from `config('app.url')` and the API prefix from `config('ddt_api.prefix')` (configured in [`laravel-generic-api`](https://github.com/dandoetech/laravel-generic-api)).
 
 ## Programmatic Use
 
