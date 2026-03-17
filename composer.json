@@ -2,10 +2,23 @@
     "name": "dandoetech/laravel-openapi-generator",
     "description": "Laravel bridge for DanDoeTech OpenAPI generator: artisan export command and wiring.",
     "type": "library",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "license": "MIT",
-    "authors": [{ "name": "Danilo Doelle", "email": "oss@dandoe.tech" }],
+    "authors": [
+        {
+            "name": "Danilo Doelle",
+            "email": "oss@dandoe.tech"
+        }
+    ],
     "homepage": "https://github.com/dandoetech/laravel-openapi-generator",
-    "keywords": ["php", "laravel", "openapi", "swagger", "artisan"],
+    "keywords": [
+        "php",
+        "laravel",
+        "openapi",
+        "swagger",
+        "artisan"
+    ],
     "require": {
         "php": "^8.2",
         "illuminate/support": "^11.0 || ^12.0",
@@ -23,7 +36,9 @@
         "orchestra/testbench": "^9.0 || ^10.0"
     },
     "autoload": {
-        "psr-4": { "DanDoeTech\\LaravelOpenApiGenerator\\": "src/" }
+        "psr-4": {
+            "DanDoeTech\\LaravelOpenApiGenerator\\": "src/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
