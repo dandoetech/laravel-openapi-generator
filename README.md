@@ -1,5 +1,7 @@
 # Laravel OpenAPI Generator
 
+> **Pre-release** — Architecture by senior tech lead, implementation largely AI-assisted with human review. Not fully reviewed. Architecture may change before v1.0.0.
+
 Laravel bridge for the DanDoeTech OpenAPI generator. Provides an Artisan command to export OpenAPI 3.1 specs from the Resource Registry.
 
 ## Installation
